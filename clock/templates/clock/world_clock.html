@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>World Clock</title>
+</head>
+<body>
+    <h1>World Clock</h1>
+    <ul>
+        {% for tz, time in world_times.items %}
+            <li><strong>{{ tz }}:</strong> {{ time }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
