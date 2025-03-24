@@ -1,14 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>World Clock</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .clock-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .timezone {
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>World Clock</h1>
-    <ul>
-        {% for tz, time in world_times.items %}
-            <li><strong>{{ tz }}:</strong> {{ time }}</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <div class="clock-container">
+            <h1>🌍 World Clock</h1>
+            <form method="GET" class="mb-3">
+                <label for="timezone">Select Timezone:</label>
+                <select name="timezone" id="timezone" class="form-select" onchange="this.form.submit()">
+                    {% for tz in all_timezones %}
+                        <option value="{{ tz }}" {% if tz == request.GET.timezone %}selected{% endif %}>{{ tz }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            <ul class="list-group">
+                {% for tz, time in world_times.items %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span class="timezone">{{ tz }}</span>
+                        <span class="time">{{ time }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
+<script>
+    function updateClock() {
+        fetch(window.location.href)  // Reload the page data
+            .then(response => response.text())
+            .then(html => {
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(html, 'text/html');
+                let newTimes = doc.querySelectorAll('.time');
+
+                document.querySelectorAll('.time').forEach((element, index) => {
+                    element.innerHTML = newTimes[index].innerHTML;
+                });
+            });
+    }
+
+    setInterval(updateClock, 1000);
+</script>
